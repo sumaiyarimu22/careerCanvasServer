@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@careercanvas.7jkjbib.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -48,6 +48,23 @@ async function run() {
     app.get("/all-jobs", async (req, res) => {
       const jobs = await jobCollections.find({}).toArray();
       res.send(jobs);
+    });
+
+    //get jobs by email
+    app.get("/myJobs/:email", async (req, res) => {
+      const jobs = await jobCollections
+        .find({ postedBy: req.params.email })
+        .toArray();
+      res.send(jobs);
+    });
+
+    //delete a job
+    app.delete("/job/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const filter = { _id: new ObjectId(id) };
+      const result = await jobCollections.deleteOne(filter);
+      res.send(result);
     });
 
     await client.db("admin").command({ ping: 1 });
