@@ -58,6 +58,28 @@ async function run() {
       res.send(jobs);
     });
 
+    // get single job useing id
+    app.get("/all-jobs/:id", async (req, res) => {
+      const id = req.params.id;
+      const job = await jobCollections.findOne({ _id: new ObjectId(id) });
+      res.send(job);
+    });
+
+    //update a job
+    app.patch("/update-job/:id", async (req, res) => {
+      const id = req.params.id;
+      const jobData = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateOne = {
+        $set: {
+          ...jobData,
+        },
+      };
+      const result = await jobCollections.updateOne(filter, updateOne, options);
+      res.send(result);
+    });
+
     //delete a job
     app.delete("/job/:id", async (req, res) => {
       const id = req.params.id;
