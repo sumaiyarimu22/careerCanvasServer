@@ -88,6 +88,13 @@ async function run() {
       const result = await jobCollections.deleteOne(filter);
       res.send(result);
     });
+    app.get("/", (req, res) => {
+      res.send("Hello World!");
+    });
+
+    app.listen(port, () => {
+      console.log(`Example app listening at http://localhost:${port}`);
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
@@ -99,11 +106,3 @@ async function run() {
   }
 }
 run().catch(console.dir);
-
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
-});
